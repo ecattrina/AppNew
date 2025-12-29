@@ -6,6 +6,29 @@
 <div class="container mt-4">
     <h2 class="mb-4">Результаты определения ошибки в коде Хэмминга (@Model.CodeLength, @Model.DataBits)</h2>
 
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Алгоритм обнаружения ошибок</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Параметры кода Хэмминга (n, k):</strong></p>
+            <ul>
+                <li><strong>n</strong> - общая длина кода</li>
+                <li><strong>k</strong> - количество информационных битов</li>
+                <li><strong>r = n - k</strong> - количество контрольных битов (битов четности)</li>
+            </ul>
+            <p><strong>Шаги алгоритма:</strong></p>
+            <ol>
+                <li>Контрольные биты располагаются на позициях, являющихся степенями двойки (1, 2, 4, 8, 16, ...)</li>
+                <li>Каждый бит четности P<sub>i</sub> контролирует позиции, у которых i-й бит в двоичном представлении равен 1</li>
+                <li>Для каждого бита четности вычисляется контрольная сумма (сумма по модулю 2 контролируемых битов)</li>
+                <li>Формируется синдром из результатов проверки контрольных битов в порядке убывания позиций</li>
+                <li>Синдром преобразуется в десятичное число - это номер позиции ошибки</li>
+                <li>Ошибка исправляется инверсией бита в найденной позиции</li>
+            </ol>
+        </div>
+    </div>
+
     <div class="card mb-4">
         <div class="card-header">
             <h5>Параметры кода</h5>
@@ -75,7 +98,7 @@
             <h5>Проверка контрольных сумм (синдром)</h5>
         </div>
         <div class="card-body">
-            @foreach (var check in Model.ParityChecks)
+            @foreach (var check in Model.ParityChecks.OrderByDescending(c => c.ParityBitPosition))
             {
                 <div class="mb-4">
                     <h6>Бит четности P@(check.ParityBitPosition) (позиция @check.ParityBitPosition):</h6>
@@ -113,9 +136,9 @@
                 <h6>Формирование синдрома:</h6>
                 <p>Синдром формируется из результатов проверки контрольных битов в порядке убывания позиций:</p>
                 <ul>
-                    @foreach (var check in Model.ParityChecks)
+                    @foreach (var check in Model.ParityChecks.OrderByDescending(c => c.ParityBitPosition))
                     {
-                        <li>s<sub>@check.ParityBitPosition</sub> = результат проверки P@check.ParityBitPosition (@(check.IsCorrect ? "0" : "1"))</li>
+                        <li>s<sub>@check.ParityBitPosition</sub> = результат проверки P@(check.ParityBitPosition) (@(check.IsCorrect ? "0" : "1"))</li>
                     }
                 </ul>
                 <p class="mb-0"><strong>Синдром: @Model.Syndrome</strong></p>
@@ -131,38 +154,42 @@
             @if (Model.HasError)
             {
                 <p>Переведем синдром <code>@Model.Syndrome</code> в десятичную систему:</p>
-                <p class="fs-5">
+                <div class="result-highlight">
                     <code>@Model.Syndrome<sub>2</sub></code> = <strong>@Model.ErrorPosition<sub>10</sub></strong>
-                </p>
-                <div class="alert alert-warning">
+                </div>
+                <div class="result-error mt-3">
                     <strong>Ошибка обнаружена в @Model.ErrorPosition-м разряде!</strong>
                 </div>
-                <div class="mt-3">
+                <div class="mt-4">
                     <p><strong>Исправленный код:</strong></p>
-                    <p>
-                        <code class="fs-4">@Model.CorrectedCode</code>
-                        @if (Model.ErrorPosition > 0 && Model.ErrorPosition <= Model.ReceivedCode.Length)
-                        {
-                            var index = Model.ErrorPosition - 1;
-                            var before = Model.ReceivedCode.Substring(0, index);
-                            var errorBit = Model.ReceivedCode[index];
-                            var after = Model.ReceivedCode.Substring(index + 1);
-                            <br />
+                    <div class="result-code">
+                        @Model.CorrectedCode
+                    </div>
+                    @if (Model.ErrorPosition > 0 && Model.ErrorPosition <= Model.ReceivedCode.Length)
+                    {
+                        var index = Model.ErrorPosition - 1;
+                        var before = Model.ReceivedCode.Substring(0, index);
+                        var errorBit = Model.ReceivedCode[index];
+                        var after = Model.ReceivedCode.Substring(index + 1);
+                        <div class="mt-2">
                             <small class="text-muted">
                                 @before<span class="text-danger fw-bold">@errorBit</span>@after 
                                 → 
                                 @before<span class="text-success fw-bold">@(errorBit == '0' ? '1' : '0')</span>@after
                             </small>
-                        }
-                    </p>
+                        </div>
+                    }
                 </div>
             }
             else
             {
-                <div class="alert alert-success">
+                <div class="result-final" style="background: linear-gradient(135deg, #d1e7dd 0%, #a3cfbb 100%); border-color: #198754;">
                     <strong>Ошибок не обнаружено!</strong> Кодовая комбинация корректна.
                 </div>
-                <p><strong>Исходный код:</strong> <code class="fs-4">@Model.CorrectedCode</code></p>
+                <div class="mt-4">
+                    <p><strong>Исходный код:</strong></p>
+                    <div class="result-code">@Model.CorrectedCode</div>
+                </div>
             }
         </div>
     </div>

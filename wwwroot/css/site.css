@@ -55,3 +55,65 @@ body {
 .bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
   border-top-color: #333;
 }
+
+/* Стили для выделения результатов */
+.result-highlight {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #0d6efd;
+  background-color: #e7f3ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid #0d6efd;
+  display: inline-block;
+  margin: 5px 0;
+}
+
+.result-final {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #198754;
+  background: linear-gradient(135deg, #d1e7dd 0%, #a3cfbb 100%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 3px solid #198754;
+  display: inline-block;
+  margin: 10px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result-error {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #dc3545;
+  background: linear-gradient(135deg, #f8d7da 0%, #f1aeb5 100%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 3px solid #dc3545;
+  display: inline-block;
+  margin: 10px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result-code {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #0d6efd;
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 2px solid #0d6efd;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+}
+
+.result-table-highlight {
+  background-color: #fff3cd !important;
+  font-weight: 600;
+}
+
+.result-table-final {
+  background-color: #d1e7dd !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+}

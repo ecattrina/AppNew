@@ -6,6 +6,23 @@
 <div class="container mt-4">
     <h2 class="mb-4">Результаты кодирования в циклическом коде</h2>
 
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Алгоритм кодирования</h5>
+        </div>
+        <div class="card-body">
+            <p>Циклический код (n, k) с порождающим многочленом g(x) степени r = n - k.</p>
+            <p><strong>Пошаговый алгоритм:</strong></p>
+            <ol>
+                <li><strong>Записать информационный полином m(x)</strong> (степени k-1) из информационной комбинации</li>
+                <li><strong>Умножить m(x) на x<sup>r</sup></strong> - сдвиг информационных битов влево на r позиций</li>
+                <li><strong>Разделить полученный полином на g(x)</strong> и найти остаток r(x) (деление выполняется по модулю 2)</li>
+                <li><strong>Сформировать кодовую комбинацию:</strong> c(x) = x<sup>r</sup> · m(x) + r(x), где остаток добавляется в младшие разряды</li>
+            </ol>
+            <p class="mb-0"><small class="text-muted">Все операции выполняются в поле GF(2), где сложение и вычитание эквивалентны операции XOR</small></p>
+        </div>
+    </div>
+
     <div class="card mb-4">
         <div class="card-header">
             <h5>Параметры кода</h5>
@@ -66,10 +83,10 @@
                                 <td>@encoding.RemainderPolynomial</td>
                                 <td><code>@encoding.Remainder</code></td>
                             </tr>
-                            <tr class="table-success">
+                            <tr class="result-table-final">
                                 <td><strong>Кодовая комбинация c(x)</strong></td>
-                                <td>@encoding.CodewordPolynomial</td>
-                                <td><code class="fs-5">@encoding.Codeword</code></td>
+                                <td><strong>@encoding.CodewordPolynomial</strong></td>
+                                <td><div class="result-code">@encoding.Codeword</div></td>
                             </tr>
                         </tbody>
                     </table>
