@@ -8,6 +8,9 @@ namespace AppNew
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            
+            // Добавляем поддержку API контроллеров
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
@@ -29,6 +32,9 @@ namespace AppNew
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            
+            // Добавляем маршруты для API
+            app.MapControllers();
 
             app.Run();
         }

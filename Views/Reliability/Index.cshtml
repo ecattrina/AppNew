@@ -6,6 +6,22 @@
 <div class="container mt-4">
     <h2 class="mb-4">Расчет статистических оценок показателей надежности объектов</h2>
 
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Алгоритм расчета</h5>
+        </div>
+        <div class="card-body">
+            <p>Для каждого момента времени t<sub>i</sub> рассчитываются следующие показатели:</p>
+            <ol>
+                <li><strong>Вероятность безотказной работы:</strong> P̂(t<sub>i</sub>) = (N - n(t<sub>i</sub>)) / N</li>
+                <li><strong>Вероятность отказов:</strong> F̂(t<sub>i</sub>) = n(t<sub>i</sub>) / N</li>
+                <li><strong>Плотность распределения отказов:</strong> f̂(t<sub>i</sub>) = Δn<sub>i</sub> / (N · Δt<sub>i</sub>), где Δn<sub>i</sub> = n(t<sub>i</sub>) - n(t<sub>i-1</sub>), Δt<sub>i</sub> = t<sub>i</sub> - t<sub>i-1</sub></li>
+                <li><strong>Интенсивность отказов:</strong> λ̂(t<sub>i</sub>) = Δn<sub>i</sub> / ((N - n(t<sub>i-1</sub>)) · Δt<sub>i</sub>), где в знаменателе берется количество работающих объектов на начало интервала</li>
+            </ol>
+            <p class="mb-0"><small class="text-muted">Для первого интервала: t = 0 до t = t<sub>1</sub>, n(0) = 0</small></p>
+        </div>
+    </div>
+
     <form asp-action="Calculate" method="post" id="reliabilityForm">
         @Html.AntiForgeryToken()
 

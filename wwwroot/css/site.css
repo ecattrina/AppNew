@@ -20,3 +20,38 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Стили для терминов со всплывающими подсказками */
+.term-tooltip {
+  border-bottom: 1px dotted #0066cc;
+  color: #0066cc;
+  cursor: help;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.term-tooltip:hover {
+  background-color: #e7f3ff;
+  border-bottom-color: #004499;
+  color: #004499;
+}
+
+/* Улучшенные стили для tooltip */
+.tooltip {
+  font-size: 0.9rem;
+  max-width: 400px;
+}
+
+.tooltip-inner {
+  text-align: left;
+  padding: 10px 12px;
+  line-height: 1.5;
+  background-color: #333;
+  color: #fff;
+}
+
+.bs-tooltip-top .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+  border-top-color: #333;
+}
