@@ -81,32 +81,32 @@
             @for (int i = 0; i < Model.Calculations.Count; i++)
             {
                 var calc = Model.Calculations[i];
-                <div class="mb-4">
-                    <h6>Для t<sub>@(i+1)</sub> = @calc.Time.ToString("F2") ч:</h6>
-                    <ul class="list-unstyled ms-3">
-                        <li>n(t<sub>@(i+1)</sub>) = @calc.Failures</li>
-                        <li>P̂(@calc.Time.ToString("F2")) = (@Model.TotalObjects - @calc.Failures) / @Model.TotalObjects = <span class="result-highlight">@calc.ReliabilityProbability.ToString("F4")</span></li>
-                        <li>F̂(@calc.Time.ToString("F2")) = @calc.Failures / @Model.TotalObjects = <span class="result-highlight">@calc.FailureProbability.ToString("F4")</span></li>
+                <div class="mb-4 p-3 bg-light rounded">
+                    <h6 class="mb-3 fw-semibold">Для t<sub>@(i+1)</sub> = @calc.Time.ToString("F2") ч:</h6>
+                    <ul class="list-unstyled ms-3 mb-0">
+                        <li class="mb-2">n(t<sub>@(i+1)</sub>) = @calc.Failures</li>
+                        <li class="mb-2">P̂(@calc.Time.ToString("F2")) = (@Model.TotalObjects - @calc.Failures) / @Model.TotalObjects = <span class="result-highlight">@calc.ReliabilityProbability.ToString("F4")</span></li>
+                        <li class="mb-2">F̂(@calc.Time.ToString("F2")) = @calc.Failures / @Model.TotalObjects = <span class="result-highlight">@calc.FailureProbability.ToString("F4")</span></li>
                         @if (i == 0)
                         {
-                            <li>Δn<sub>@(i+1)</sub> = @calc.Failures - 0 = @calc.DeltaN.ToString("F0")</li>
-                            <li>Δt<sub>@(i+1)</sub> = @calc.Time.ToString("F2") - 0 = @calc.DeltaT.ToString("F2")</li>
+                            <li class="mb-2">Δn<sub>@(i+1)</sub> = @calc.Failures - 0 = @calc.DeltaN.ToString("F0")</li>
+                            <li class="mb-2">Δt<sub>@(i+1)</sub> = @calc.Time.ToString("F2") - 0 = @calc.DeltaT.ToString("F2")</li>
                         }
                         else
                         {
                             var prevCalc = Model.Calculations[i - 1];
-                            <li>Δn<sub>@(i+1)</sub> = @calc.Failures - @prevCalc.Failures = @calc.DeltaN.ToString("F0")</li>
-                            <li>Δt<sub>@(i+1)</sub> = @calc.Time.ToString("F2") - @prevCalc.Time.ToString("F2") = @calc.DeltaT.ToString("F2")</li>
+                            <li class="mb-2">Δn<sub>@(i+1)</sub> = @calc.Failures - @prevCalc.Failures = @calc.DeltaN.ToString("F0")</li>
+                            <li class="mb-2">Δt<sub>@(i+1)</sub> = @calc.Time.ToString("F2") - @prevCalc.Time.ToString("F2") = @calc.DeltaT.ToString("F2")</li>
                         }
-                        <li>f̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / (@Model.TotalObjects · @calc.DeltaT.ToString("F2")) = <span class="result-highlight">@calc.FailureDensity.ToString("F6")</span> (1/ч)</li>
+                        <li class="mb-2">f̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / (@Model.TotalObjects · @calc.DeltaT.ToString("F2")) = <span class="result-highlight">@calc.FailureDensity.ToString("F6")</span> (1/ч)</li>
                         @if (i == 0)
                         {
-                            <li>λ̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / ((@Model.TotalObjects - 0) · @calc.DeltaT.ToString("F2")) = <span class="result-highlight">@calc.FailureRate.ToString("F6")</span> (1/ч)</li>
+                            <li class="mb-2">λ̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / ((@Model.TotalObjects - 0) · @calc.DeltaT.ToString("F2")) = <span class="result-highlight">@calc.FailureRate.ToString("F6")</span> (1/ч)</li>
                         }
                         else
                         {
                             var prevCalc = Model.Calculations[i - 1];
-                            <li>λ̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / ((@Model.TotalObjects - @prevCalc.Failures) · @calc.DeltaT.ToString("F2")) = <span class="result-highlight">@calc.FailureRate.ToString("F6")</span> (1/ч)</li>
+                            <li class="mb-2">λ̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / ((@Model.TotalObjects - @prevCalc.Failures) · @calc.DeltaT.ToString("F2")) = <span class="result-highlight">@calc.FailureRate.ToString("F6")</span> (1/ч)</li>
                         }
                     </ul>
                 </div>

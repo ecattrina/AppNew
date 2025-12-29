@@ -100,10 +100,10 @@
         <div class="card-body">
             @foreach (var check in Model.ParityChecks.OrderByDescending(c => c.ParityBitPosition))
             {
-                <div class="mb-4">
-                    <h6>Бит четности P@(check.ParityBitPosition) (позиция @check.ParityBitPosition):</h6>
-                    <p>Контролирует позиции: <strong>@string.Join(", ", check.ControlledPositions)</strong></p>
-                    <p>
+                <div class="mb-4 p-3 bg-light rounded">
+                    <h6 class="mb-3 fw-semibold">Бит четности P@(check.ParityBitPosition) (позиция @check.ParityBitPosition):</h6>
+                    <p class="mb-2">Контролирует позиции: <strong>@string.Join(", ", check.ControlledPositions)</strong></p>
+                    <p class="mb-2">
                         Биты на этих позициях: 
                         @for (int i = 0; i < check.ControlledPositions.Count; i++)
                         {
@@ -114,12 +114,12 @@
                             }
                         }
                     </p>
-                    <p>
+                    <p class="mb-2">
                         Сумма по модулю 2: 
                         @string.Join(" + ", check.ControlledBits.Select(b => b.ToString())) 
-                        = @check.Sum (mod 2) = @(check.Sum % 2)
+                        = @check.Sum (mod 2) = <strong>@(check.Sum % 2)</strong>
                     </p>
-                    <p>
+                    <p class="mb-0">
                         @if (check.IsCorrect)
                         {
                             <span class="badge bg-success">OK</span>

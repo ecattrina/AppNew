@@ -57,11 +57,9 @@
             @foreach (var step in Model.Steps)
             {
                 <div class="mb-3 p-3 bg-light rounded">
-                    <strong>@step.Description</strong>
-                    <div class="mt-2">
-                        <div>@step.Calculation</div>
-                        <div class="text-success mt-1"><strong>@step.Result</strong></div>
-                    </div>
+                    <div class="fw-semibold mb-2 text-primary">@step.Description</div>
+                    <div class="mb-2 text-muted">@step.Calculation</div>
+                    <div class="text-success fw-semibold">@step.Result</div>
                 </div>
             }
         </div>

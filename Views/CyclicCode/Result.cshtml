@@ -45,15 +45,13 @@
             </div>
             <div class="card-body">
                 <div class="mb-4">
-                    <h6>Пошаговое решение:</h6>
+                    <h6 class="mb-3">Пошаговое решение:</h6>
                     @foreach (var step in encoding.Steps)
                     {
                         <div class="mb-3 p-3 bg-light rounded">
-                            <strong>@step.Description</strong>
-                            <div class="mt-2">
-                                <div>@step.Calculation</div>
-                                <div class="text-success mt-1"><strong>@step.Result</strong></div>
-                            </div>
+                            <div class="fw-semibold mb-2 text-primary">@step.Description</div>
+                            <div class="mb-2 text-muted">@step.Calculation</div>
+                            <div class="text-success fw-semibold">@step.Result</div>
                         </div>
                     }
                 </div>
@@ -74,7 +72,7 @@
                                 <td><code>@encoding.InformationCombination</code></td>
                             </tr>
                             <tr>
-                                <td><strong>x^r * m(x)</strong></td>
+                                <td><strong>x<sup>r</sup> · m(x)</strong></td>
                                 <td>@encoding.ShiftedPolynomial</td>
                                 <td><code>@(encoding.InformationCombination + new string('0', Model.ParityBits))</code></td>
                             </tr>
