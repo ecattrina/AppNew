@@ -37,21 +37,22 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Временные точки и количество отказов</label>
                     <div id="timePointsContainer">
                         @for (int i = 0; i < Model.TimePoints.Count; i++)
                         {
-                            <div class="row mb-2 time-point-row">
-                                <div class="col-md-5">
-                                    <input asp-for="TimePoints[i].Time" class="form-control" type="number" step="0.01" min="0" placeholder="Время (t_i)" />
+                            <div class="row mb-2 time-point-row g-2 align-items-end">
+                                <div class="col-12 col-md-5">
+                                    <label class="form-label">t<sub>@(i+1)</sub> (ч)</label>
+                                    <input asp-for="TimePoints[i].Time" class="form-control" type="number" step="0.01" min="0" />
                                     <span asp-validation-for="TimePoints[i].Time" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-5">
-                                    <input asp-for="TimePoints[i].Failures" class="form-control" type="number" min="0" placeholder="Количество отказов (n(t_i))" />
+                                <div class="col-12 col-md-5">
+                                    <label class="form-label">n(t<sub>@(i+1)</sub>)</label>
+                                    <input asp-for="TimePoints[i].Failures" class="form-control" type="number" min="0" />
                                     <span asp-validation-for="TimePoints[i].Failures" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-2">
-                                    <button type="button" class="btn btn-danger btn-sm remove-row" @(Model.TimePoints.Count <= 1 ? "disabled" : "")>Удалить</button>
+                                <div class="col-12 col-md-2">
+                                    <button type="button" class="btn btn-danger btn-sm w-100 remove-row" @(Model.TimePoints.Count <= 1 ? "disabled" : "")>Удалить</button>
                                 </div>
                             </div>
                         }
@@ -63,7 +64,7 @@
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        <div class="mb-3">
+        <div class="mb-3 d-flex flex-column flex-md-row gap-2">
             <button type="submit" class="btn btn-primary">Рассчитать</button>
             <button type="button" class="btn btn-secondary" id="resetForm">Сбросить</button>
         </div>
@@ -78,17 +79,22 @@
             let rowIndex = @Model.TimePoints.Count;
 
             document.getElementById('addTimePoint').addEventListener('click', function() {
+                const existingRows = container.querySelectorAll('.time-point-row');
+                const nextIndex = existingRows.length + 1;
+                
                 const row = document.createElement('div');
-                row.className = 'row mb-2 time-point-row';
+                row.className = 'row mb-2 time-point-row g-2 align-items-end';
                 row.innerHTML = `
-                    <div class="col-md-5">
-                        <input name="TimePoints[${rowIndex}].Time" class="form-control" type="number" step="0.01" min="0" placeholder="Время (t_i)" />
+                    <div class="col-12 col-md-5">
+                        <label class="form-label">t<sub>${nextIndex}</sub> (ч)</label>
+                        <input name="TimePoints[${rowIndex}].Time" class="form-control" type="number" step="0.01" min="0" />
                     </div>
-                    <div class="col-md-5">
-                        <input name="TimePoints[${rowIndex}].Failures" class="form-control" type="number" min="0" placeholder="Количество отказов (n(t_i))" />
+                    <div class="col-12 col-md-5">
+                        <label class="form-label">n(t<sub>${nextIndex}</sub>)</label>
+                        <input name="TimePoints[${rowIndex}].Failures" class="form-control" type="number" min="0" />
                     </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-danger btn-sm remove-row">Удалить</button>
+                    <div class="col-12 col-md-2">
+                        <button type="button" class="btn btn-danger btn-sm w-100 remove-row">Удалить</button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -123,6 +129,16 @@
                     const failuresInput = row.querySelector('input[name*="Failures"]');
                     if (timeInput) timeInput.name = `TimePoints[${index}].Time`;
                     if (failuresInput) failuresInput.name = `TimePoints[${index}].Failures`;
+                    
+                    // Обновляем подписи
+                    const timeLabel = row.querySelector('label');
+                    const failuresLabel = row.querySelectorAll('label')[1];
+                    if (timeLabel) {
+                        timeLabel.innerHTML = `t<sub>${index + 1}</sub> (ч)`;
+                    }
+                    if (failuresLabel) {
+                        failuresLabel.innerHTML = `n(t<sub>${index + 1}</sub>)`;
+                    }
                 });
                 rowIndex = rows.length;
             }

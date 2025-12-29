@@ -37,14 +37,14 @@
                 <h5>Входные данные</h5>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-3 g-3">
+                    <div class="col-12 col-md-6">
                         <label asp-for="CodeLength" class="form-label">Общая длина кода (n)</label>
                         <input asp-for="CodeLength" class="form-control" type="number" min="3" max="100" />
                         <span asp-validation-for="CodeLength" class="text-danger"></span>
                         <small class="form-text text-muted">Общее количество битов в коде</small>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <label asp-for="DataBits" class="form-label">Количество информационных битов (k)</label>
                         <input asp-for="DataBits" class="form-control" type="number" min="1" max="50" />
                         <span asp-validation-for="DataBits" class="text-danger"></span>
@@ -62,7 +62,7 @@
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        <div class="mb-3">
+        <div class="mb-3 d-flex flex-column flex-md-row gap-2">
             <button type="submit" class="btn btn-primary">Определить ошибку</button>
             <button type="button" class="btn btn-secondary" id="resetForm">Сбросить</button>
         </div>

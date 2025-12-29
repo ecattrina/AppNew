@@ -33,18 +33,18 @@
                 <h5>Входные данные</h5>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-4">
+                <div class="row mb-3 g-3">
+                    <div class="col-12 col-md-4">
                         <label asp-for="CodeLength" class="form-label">Общая длина кода (n)</label>
                         <input asp-for="CodeLength" class="form-control" type="number" min="3" max="100" />
                         <span asp-validation-for="CodeLength" class="text-danger"></span>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label asp-for="DataBits" class="form-label">Информационные биты (k)</label>
                         <input asp-for="DataBits" class="form-control" type="number" min="1" max="50" />
                         <span asp-validation-for="DataBits" class="text-danger"></span>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label asp-for="GeneratorPolynomial" class="form-label">Порождающий многочлен g(x)</label>
                         <input asp-for="GeneratorPolynomial" class="form-control" type="text" placeholder="x^3+x+1" />
                         <span asp-validation-for="GeneratorPolynomial" class="text-danger"></span>
@@ -63,7 +63,7 @@
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        <div class="mb-3">
+        <div class="mb-3 d-flex flex-column flex-md-row gap-2">
             <button type="submit" class="btn btn-primary">Определить ошибку</button>
             <button type="button" class="btn btn-secondary" id="resetForm">Сбросить</button>
         </div>
