@@ -1,0 +1,108 @@
+@model AppNew.Models.CyclicCodeErrorInputModel
+@{
+    ViewData["Title"] = "Обнаружение ошибок в циклическом коде";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Определение номера искаженного бита в циклическом коде</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Описание</h5>
+        </div>
+        <div class="card-body">
+            <p>Определение номера искаженного бита в принятой кодовой комбинации циклического кода (n, k) с порождающим многочленом g(x).</p>
+            <p><strong>Алгоритм обнаружения ошибок:</strong></p>
+            <ol>
+                <li>Преобразовать принятую комбинацию в полином r(x)</li>
+                <li>Вычислить синдром s(x) = r(x) mod g(x)</li>
+                <li>Если s(x) ≠ 0, построить таблицу синдромов для ошибок в каждой позиции</li>
+                <li>Найти позицию ошибки по синдрому и исправить её</li>
+            </ol>
+        </div>
+    </div>
+
+    <form asp-action="DetectError" method="post" id="cyclicCodeErrorForm">
+        @Html.AntiForgeryToken()
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Входные данные</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="CodeLength" class="form-label">Общая длина кода (n)</label>
+                        <input asp-for="CodeLength" class="form-control" type="number" min="3" max="100" />
+                        <span asp-validation-for="CodeLength" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="DataBits" class="form-label">Информационные биты (k)</label>
+                        <input asp-for="DataBits" class="form-control" type="number" min="1" max="50" />
+                        <span asp-validation-for="DataBits" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="GeneratorPolynomial" class="form-label">Порождающий многочлен g(x)</label>
+                        <input asp-for="GeneratorPolynomial" class="form-control" type="text" placeholder="x^3+x+1" />
+                        <span asp-validation-for="GeneratorPolynomial" class="text-danger"></span>
+                        <small class="form-text text-muted">Например: x^3+x+1</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ReceivedCode" class="form-label">Принятая кодовая комбинация</label>
+                    <input asp-for="ReceivedCode" class="form-control" type="text" placeholder="0101001" id="receivedCodeInput" />
+                    <span asp-validation-for="ReceivedCode" class="text-danger"></span>
+                    <small class="form-text text-muted">Введите код из <span id="codeLengthDisplay">7</span> бит (0 и 1)</small>
+                </div>
+            </div>
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Определить ошибку</button>
+            <button type="button" class="btn btn-secondary" id="resetForm">Сбросить</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeLengthInput = document.querySelector('input[name="CodeLength"]');
+            const receivedCodeInput = document.getElementById('receivedCodeInput');
+            const codeLengthDisplay = document.getElementById('codeLengthDisplay');
+            
+            function updateCodeLength() {
+                const codeLength = parseInt(codeLengthInput.value) || 7;
+                codeLengthDisplay.textContent = codeLength;
+                receivedCodeInput.maxLength = codeLength;
+                
+                if (receivedCodeInput.value.length > codeLength) {
+                    receivedCodeInput.value = receivedCodeInput.value.substring(0, codeLength);
+                }
+            }
+            
+            codeLengthInput.addEventListener('input', updateCodeLength);
+            updateCodeLength();
+            
+            // Разрешаем ввод только 0 и 1
+            receivedCodeInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^01]/g, '');
+                const maxLength = parseInt(codeLengthInput.value) || 7;
+                if (this.value.length > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                }
+            });
+
+            document.getElementById('resetForm').addEventListener('click', function() {
+                if (confirm('Вы уверены, что хотите сбросить форму?')) {
+                    location.reload();
+                }
+            });
+        });
+    </script>
+}
+

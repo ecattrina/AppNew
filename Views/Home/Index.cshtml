@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Выбор задачи";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-5">Выберите задачу для расчета</h1>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-graph-up"></i> Расчет показателей надежности
+                    </h5>
+                    <p class="card-text">
+                        Статистические оценки показателей надежности объектов на основе результатов испытаний:
+                    </p>
+                    <ul class="list-unstyled">
+                        <li>✓ Вероятность безотказной работы</li>
+                        <li>✓ Вероятность отказов</li>
+                        <li>✓ Плотность распределения отказов</li>
+                        <li>✓ Интенсивность отказов</li>
+                    </ul>
+                    <a asp-controller="Reliability" asp-action="Index" class="btn btn-primary">Перейти к расчету</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-shield-check"></i> Обнаружение ошибок в коде Хэмминга (n, k)
+                    </h5>
+                    <p class="card-text">
+                        Определение номера искаженного бита в принятой кодовой комбинации, закодированной алгоритмом Хэмминга:
+                    </p>
+                    <ul class="list-unstyled">
+                        <li>✓ Проверка контрольных сумм</li>
+                        <li>✓ Формирование синдрома</li>
+                        <li>✓ Определение позиции ошибки</li>
+                        <li>✓ Исправление ошибки</li>
+                    </ul>
+                    <a asp-controller="Hamming" asp-action="Index" class="btn btn-primary">Перейти к расчету</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-code-square"></i> Кодирование в циклическом коде
+                    </h5>
+                    <p class="card-text">
+                        Кодирование информационных комбинаций с использованием порождающего многочлена:
+                    </p>
+                    <ul class="list-unstyled">
+                        <li>✓ Запись информационного полинома</li>
+                        <li>✓ Умножение на x^r</li>
+                        <li>✓ Деление на g(x)</li>
+                        <li>✓ Формирование кодовой комбинации</li>
+                    </ul>
+                    <a asp-controller="CyclicCode" asp-action="Index" class="btn btn-primary">Перейти к расчету</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-bug"></i> Обнаружение ошибок в циклическом коде
+                    </h5>
+                    <p class="card-text">
+                        Определение номера искаженного бита в принятой кодовой комбинации циклического кода:
+                    </p>
+                    <ul class="list-unstyled">
+                        <li>✓ Вычисление синдрома</li>
+                        <li>✓ Построение таблицы синдромов</li>
+                        <li>✓ Определение позиции ошибки</li>
+                        <li>✓ Исправление ошибки</li>
+                    </ul>
+                    <a asp-controller="CyclicCodeError" asp-action="Index" class="btn btn-primary">Перейти к расчету</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

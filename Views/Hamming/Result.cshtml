@@ -1,0 +1,174 @@
+@model AppNew.Models.HammingResultModel
+@{
+    ViewData["Title"] = "Результаты расчета";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Результаты определения ошибки в коде Хэмминга (@Model.CodeLength, @Model.DataBits)</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Параметры кода</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><strong>Общая длина кода (n):</strong> @Model.CodeLength</li>
+                <li><strong>Информационные биты (k):</strong> @Model.DataBits</li>
+                <li><strong>Контрольные биты (r):</strong> @Model.ParityBits</li>
+                <li><strong>Позиции контрольных битов:</strong> @string.Join(", ", Model.ParityPositions.Select(p => $"P{p}"))</li>
+                <li><strong>Позиции информационных битов:</strong> @string.Join(", ", Model.DataPositions)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Принятая кодовая комбинация</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <strong>Код:</strong> <code class="fs-4">@Model.ReceivedCode</code>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center" style="max-width: 800px;">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Позиция</th>
+                            @foreach (var bit in Model.BitPositions)
+                            {
+                                <th>@bit.Position</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Биты</strong></td>
+                            @foreach (var bit in Model.BitPositions)
+                            {
+                                <td>@bit.Bit</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td><strong>Тип</strong></td>
+                            @foreach (var bit in Model.BitPositions)
+                            {
+                                <td>
+                                    @if (bit.Type == "Parity")
+                                    {
+                                        <span class="badge bg-primary">P@(bit.Position)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">D</span>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Проверка контрольных сумм (синдром)</h5>
+        </div>
+        <div class="card-body">
+            @foreach (var check in Model.ParityChecks)
+            {
+                <div class="mb-4">
+                    <h6>Бит четности P@(check.ParityBitPosition) (позиция @check.ParityBitPosition):</h6>
+                    <p>Контролирует позиции: <strong>@string.Join(", ", check.ControlledPositions)</strong></p>
+                    <p>
+                        Биты на этих позициях: 
+                        @for (int i = 0; i < check.ControlledPositions.Count; i++)
+                        {
+                            <code>@check.ControlledBits[i]</code>
+                            @if (i < check.ControlledPositions.Count - 1)
+                            {
+                                <text>, </text>
+                            }
+                        }
+                    </p>
+                    <p>
+                        Сумма по модулю 2: 
+                        @string.Join(" + ", check.ControlledBits.Select(b => b.ToString())) 
+                        = @check.Sum (mod 2) = @(check.Sum % 2)
+                    </p>
+                    <p>
+                        @if (check.IsCorrect)
+                        {
+                            <span class="badge bg-success">OK</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Ошибка</span>
+                        }
+                    </p>
+                </div>
+            }
+
+            <div class="alert alert-info">
+                <h6>Формирование синдрома:</h6>
+                <p>Синдром формируется из результатов проверки контрольных битов в порядке убывания позиций:</p>
+                <ul>
+                    @foreach (var check in Model.ParityChecks)
+                    {
+                        <li>s<sub>@check.ParityBitPosition</sub> = результат проверки P@check.ParityBitPosition (@(check.IsCorrect ? "0" : "1"))</li>
+                    }
+                </ul>
+                <p class="mb-0"><strong>Синдром: @Model.Syndrome</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Определение позиции ошибки</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.HasError)
+            {
+                <p>Переведем синдром <code>@Model.Syndrome</code> в десятичную систему:</p>
+                <p class="fs-5">
+                    <code>@Model.Syndrome<sub>2</sub></code> = <strong>@Model.ErrorPosition<sub>10</sub></strong>
+                </p>
+                <div class="alert alert-warning">
+                    <strong>Ошибка обнаружена в @Model.ErrorPosition-м разряде!</strong>
+                </div>
+                <div class="mt-3">
+                    <p><strong>Исправленный код:</strong></p>
+                    <p>
+                        <code class="fs-4">@Model.CorrectedCode</code>
+                        @if (Model.ErrorPosition > 0 && Model.ErrorPosition <= Model.ReceivedCode.Length)
+                        {
+                            var index = Model.ErrorPosition - 1;
+                            var before = Model.ReceivedCode.Substring(0, index);
+                            var errorBit = Model.ReceivedCode[index];
+                            var after = Model.ReceivedCode.Substring(index + 1);
+                            <br />
+                            <small class="text-muted">
+                                @before<span class="text-danger fw-bold">@errorBit</span>@after 
+                                → 
+                                @before<span class="text-success fw-bold">@(errorBit == '0' ? '1' : '0')</span>@after
+                            </small>
+                        }
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success">
+                    <strong>Ошибок не обнаружено!</strong> Кодовая комбинация корректна.
+                </div>
+                <p><strong>Исходный код:</strong> <code class="fs-4">@Model.CorrectedCode</code></p>
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-primary">Новый расчет</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Выбор задачи</a>
+    </div>
+</div>

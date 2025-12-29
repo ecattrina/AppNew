@@ -1,0 +1,106 @@
+@model AppNew.Models.ReliabilityResultModel
+@{
+    ViewData["Title"] = "Результаты расчета";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Результаты расчета показателей надежности</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Исходные данные</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Общее число объектов (N):</strong> @Model.TotalObjects</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Результаты расчетов</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th rowspan="2">t<sub>i</sub> (ч)</th>
+                            <th rowspan="2">n(t<sub>i</sub>)</th>
+                            <th rowspan="2">P̂(t<sub>i</sub>)<br/><small>Вероятность безотказной работы</small></th>
+                            <th rowspan="2">F̂(t<sub>i</sub>)<br/><small>Вероятность отказов</small></th>
+                            <th colspan="2">Промежуточные значения</th>
+                            <th rowspan="2">f̂(t<sub>i</sub>) (1/ч)<br/><small>Плотность распределения отказов</small></th>
+                            <th rowspan="2">λ̂(t<sub>i</sub>) (1/ч)<br/><small>Интенсивность отказов</small></th>
+                        </tr>
+                        <tr>
+                            <th>Δn<sub>i</sub></th>
+                            <th>Δt<sub>i</sub></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var calc in Model.Calculations)
+                        {
+                            <tr>
+                                <td>@calc.Time.ToString("F2")</td>
+                                <td>@calc.Failures</td>
+                                <td>@calc.ReliabilityProbability.ToString("F4")</td>
+                                <td>@calc.FailureProbability.ToString("F4")</td>
+                                <td>@calc.DeltaN.ToString("F0")</td>
+                                <td>@calc.DeltaT.ToString("F2")</td>
+                                <td>@calc.FailureDensity.ToString("F6")</td>
+                                <td>@calc.FailureRate.ToString("F6")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Детальные расчеты</h5>
+        </div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Calculations.Count; i++)
+            {
+                var calc = Model.Calculations[i];
+                <div class="mb-4">
+                    <h6>Для t<sub>@(i+1)</sub> = @calc.Time.ToString("F2") ч:</h6>
+                    <ul class="list-unstyled ms-3">
+                        <li>n(t<sub>@(i+1)</sub>) = @calc.Failures</li>
+                        <li>P̂(@calc.Time.ToString("F2")) = (@Model.TotalObjects - @calc.Failures) / @Model.TotalObjects = @calc.ReliabilityProbability.ToString("F4")</li>
+                        <li>F̂(@calc.Time.ToString("F2")) = @calc.Failures / @Model.TotalObjects = @calc.FailureProbability.ToString("F4")</li>
+                        @if (i == 0)
+                        {
+                            <li>Δn<sub>@(i+1)</sub> = @calc.Failures - 0 = @calc.DeltaN.ToString("F0")</li>
+                            <li>Δt<sub>@(i+1)</sub> = @calc.Time.ToString("F2") - 0 = @calc.DeltaT.ToString("F2")</li>
+                        }
+                        else
+                        {
+                            var prevCalc = Model.Calculations[i - 1];
+                            <li>Δn<sub>@(i+1)</sub> = @calc.Failures - @prevCalc.Failures = @calc.DeltaN.ToString("F0")</li>
+                            <li>Δt<sub>@(i+1)</sub> = @calc.Time.ToString("F2") - @prevCalc.Time.ToString("F2") = @calc.DeltaT.ToString("F2")</li>
+                        }
+                        <li>f̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / (@Model.TotalObjects · @calc.DeltaT.ToString("F2")) = @calc.FailureDensity.ToString("F6") (1/ч)</li>
+                        @if (i == 0)
+                        {
+                            <li>λ̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / ((@Model.TotalObjects - 0) · @calc.DeltaT.ToString("F2")) = @calc.FailureRate.ToString("F6") (1/ч)</li>
+                        }
+                        else
+                        {
+                            var prevCalc = Model.Calculations[i - 1];
+                            <li>λ̂(@calc.Time.ToString("F2")) = @calc.DeltaN.ToString("F0") / ((@Model.TotalObjects - @prevCalc.Failures) · @calc.DeltaT.ToString("F2")) = @calc.FailureRate.ToString("F6") (1/ч)</li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-primary">Новый расчет</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Выбор задачи</a>
+    </div>
+</div>
+

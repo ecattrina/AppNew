@@ -1,0 +1,116 @@
+@model AppNew.Models.HammingInputModel
+@{
+    ViewData["Title"] = "Обнаружение ошибок в коде Хэмминга";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Определение номера искаженного бита в коде Хэмминга (n, k)</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Описание</h5>
+        </div>
+        <div class="card-body">
+            <p>Код Хэмминга (n, k) использует:</p>
+            <ul>
+                <li><strong>n</strong> - общая длина кода</li>
+                <li><strong>k</strong> - количество информационных битов</li>
+                <li><strong>r = n - k</strong> - количество контрольных битов (битов четности)</li>
+            </ul>
+            <p>Контрольные биты располагаются на позициях, являющихся степенями двойки (1, 2, 4, 8, 16, ...).</p>
+            <p>Каждый бит четности контролирует позиции, у которых соответствующий бит в двоичном представлении равен 1.</p>
+        </div>
+    </div>
+
+    <form asp-action="Calculate" method="post" id="hammingForm">
+        @Html.AntiForgeryToken()
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Входные данные</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="CodeLength" class="form-label">Общая длина кода (n)</label>
+                        <input asp-for="CodeLength" class="form-control" type="number" min="3" max="100" />
+                        <span asp-validation-for="CodeLength" class="text-danger"></span>
+                        <small class="form-text text-muted">Общее количество битов в коде</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DataBits" class="form-label">Количество информационных битов (k)</label>
+                        <input asp-for="DataBits" class="form-control" type="number" min="1" max="50" />
+                        <span asp-validation-for="DataBits" class="text-danger"></span>
+                        <small class="form-text text-muted">Количество битов данных</small>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="CodeCombination" class="form-label">Принятая кодовая комбинация</label>
+                    <input asp-for="CodeCombination" class="form-control" type="text" placeholder="0001101" id="codeInput" />
+                    <span asp-validation-for="CodeCombination" class="text-danger"></span>
+                    <small class="form-text text-muted">Введите код из <span id="codeLengthDisplay">7</span> бит (0 и 1)</small>
+                </div>
+            </div>
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Определить ошибку</button>
+            <button type="button" class="btn btn-secondary" id="resetForm">Сбросить</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeLengthInput = document.querySelector('input[name="CodeLength"]');
+            const dataBitsInput = document.querySelector('input[name="DataBits"]');
+            const codeInput = document.getElementById('codeInput');
+            const codeLengthDisplay = document.getElementById('codeLengthDisplay');
+            
+            // Обновляем максимальную длину кода при изменении CodeLength
+            function updateCodeLength() {
+                const codeLength = parseInt(codeLengthInput.value) || 7;
+                codeLengthDisplay.textContent = codeLength;
+                codeInput.maxLength = codeLength;
+                
+                // Обрезаем код, если он длиннее
+                if (codeInput.value.length > codeLength) {
+                    codeInput.value = codeInput.value.substring(0, codeLength);
+                }
+            }
+            
+            codeLengthInput.addEventListener('input', updateCodeLength);
+            updateCodeLength();
+            
+            // Разрешаем ввод только 0 и 1
+            codeInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^01]/g, '');
+                const maxLength = parseInt(codeLengthInput.value) || 7;
+                if (this.value.length > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                }
+            });
+
+            // Ограничиваем длину
+            codeInput.addEventListener('keypress', function(e) {
+                const maxLength = parseInt(codeLengthInput.value) || 7;
+                if (this.value.length >= maxLength && e.key !== 'Backspace' && e.key !== 'Delete') {
+                    e.preventDefault();
+                }
+            });
+
+            document.getElementById('resetForm').addEventListener('click', function() {
+                if (confirm('Вы уверены, что хотите сбросить форму?')) {
+                    codeLengthInput.value = 7;
+                    dataBitsInput.value = 4;
+                    codeInput.value = '0001101';
+                    updateCodeLength();
+                }
+            });
+        });
+    </script>
+}

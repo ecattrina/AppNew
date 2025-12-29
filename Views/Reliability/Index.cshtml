@@ -1,0 +1,123 @@
+@model AppNew.Models.ReliabilityInputModel
+@{
+    ViewData["Title"] = "Расчет показателей надежности";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Расчет статистических оценок показателей надежности объектов</h2>
+
+    <form asp-action="Calculate" method="post" id="reliabilityForm">
+        @Html.AntiForgeryToken()
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Входные данные</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="TotalObjects" class="form-label">Общее число объектов (N)</label>
+                    <input asp-for="TotalObjects" class="form-control" type="number" min="1" />
+                    <span asp-validation-for="TotalObjects" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Временные точки и количество отказов</label>
+                    <div id="timePointsContainer">
+                        @for (int i = 0; i < Model.TimePoints.Count; i++)
+                        {
+                            <div class="row mb-2 time-point-row">
+                                <div class="col-md-5">
+                                    <input asp-for="TimePoints[i].Time" class="form-control" type="number" step="0.01" min="0" placeholder="Время (t_i)" />
+                                    <span asp-validation-for="TimePoints[i].Time" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-5">
+                                    <input asp-for="TimePoints[i].Failures" class="form-control" type="number" min="0" placeholder="Количество отказов (n(t_i))" />
+                                    <span asp-validation-for="TimePoints[i].Failures" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-danger btn-sm remove-row" @(Model.TimePoints.Count <= 1 ? "disabled" : "")>Удалить</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm mt-2" id="addTimePoint">Добавить временную точку</button>
+                </div>
+            </div>
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Рассчитать</button>
+            <button type="button" class="btn btn-secondary" id="resetForm">Сбросить</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('timePointsContainer');
+            let rowIndex = @Model.TimePoints.Count;
+
+            document.getElementById('addTimePoint').addEventListener('click', function() {
+                const row = document.createElement('div');
+                row.className = 'row mb-2 time-point-row';
+                row.innerHTML = `
+                    <div class="col-md-5">
+                        <input name="TimePoints[${rowIndex}].Time" class="form-control" type="number" step="0.01" min="0" placeholder="Время (t_i)" />
+                    </div>
+                    <div class="col-md-5">
+                        <input name="TimePoints[${rowIndex}].Failures" class="form-control" type="number" min="0" placeholder="Количество отказов (n(t_i))" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger btn-sm remove-row">Удалить</button>
+                    </div>
+                `;
+                container.appendChild(row);
+                rowIndex++;
+                updateRemoveButtons();
+            });
+
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-row')) {
+                    const rows = container.querySelectorAll('.time-point-row');
+                    if (rows.length > 1) {
+                        e.target.closest('.time-point-row').remove();
+                        updateRemoveButtons();
+                        // Переиндексируем оставшиеся поля
+                        reindexRows();
+                    }
+                }
+            });
+
+            function updateRemoveButtons() {
+                const rows = container.querySelectorAll('.time-point-row');
+                rows.forEach(row => {
+                    const btn = row.querySelector('.remove-row');
+                    btn.disabled = rows.length <= 1;
+                });
+            }
+
+            function reindexRows() {
+                const rows = container.querySelectorAll('.time-point-row');
+                rows.forEach((row, index) => {
+                    const timeInput = row.querySelector('input[name*="Time"]');
+                    const failuresInput = row.querySelector('input[name*="Failures"]');
+                    if (timeInput) timeInput.name = `TimePoints[${index}].Time`;
+                    if (failuresInput) failuresInput.name = `TimePoints[${index}].Failures`;
+                });
+                rowIndex = rows.length;
+            }
+
+            document.getElementById('resetForm').addEventListener('click', function() {
+                if (confirm('Вы уверены, что хотите сбросить форму?')) {
+                    location.reload();
+                }
+            });
+        });
+    </script>
+}
+
+

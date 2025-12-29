@@ -1,0 +1,85 @@
+@model AppNew.Models.CyclicCodeResultModel
+@{
+    ViewData["Title"] = "Результаты кодирования";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Результаты кодирования в циклическом коде</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Параметры кода</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><strong>Общая длина кода (n):</strong> @Model.CodeLength</li>
+                <li><strong>Информационные биты (k):</strong> @Model.DataBits</li>
+                <li><strong>Контрольные биты (r):</strong> @Model.ParityBits</li>
+                <li><strong>Порождающий многочлен:</strong> g(x) = @Model.GeneratorPolynomial</li>
+            </ul>
+        </div>
+    </div>
+
+    @foreach (var encoding in Model.EncodingResults)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Комбинация: @encoding.InformationCombination</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Пошаговое решение:</h6>
+                    @foreach (var step in encoding.Steps)
+                    {
+                        <div class="mb-3 p-3 bg-light rounded">
+                            <strong>@step.Description</strong>
+                            <div class="mt-2">
+                                <div>@step.Calculation</div>
+                                <div class="text-success mt-1"><strong>@step.Result</strong></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Этап</th>
+                                <th>Полином</th>
+                                <th>Бинарное представление</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Информационный полином m(x)</strong></td>
+                                <td>@encoding.InformationPolynomial</td>
+                                <td><code>@encoding.InformationCombination</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>x^r * m(x)</strong></td>
+                                <td>@encoding.ShiftedPolynomial</td>
+                                <td><code>@(encoding.InformationCombination + new string('0', Model.ParityBits))</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Остаток r(x)</strong></td>
+                                <td>@encoding.RemainderPolynomial</td>
+                                <td><code>@encoding.Remainder</code></td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>Кодовая комбинация c(x)</strong></td>
+                                <td>@encoding.CodewordPolynomial</td>
+                                <td><code class="fs-5">@encoding.Codeword</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mb-3">
+        <a asp-action="Index" class="btn btn-primary">Новый расчет</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Выбор задачи</a>
+    </div>
+</div>
